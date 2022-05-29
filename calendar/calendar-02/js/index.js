@@ -1,105 +1,71 @@
-(function() {
-    let calendar = {
-        curDate: new Date(),
+const yearList = []
+const monthList = []
+for(let i = 1990; i <= 2030; i++) {yearList.push(i)}
+for(let i = 0; i <= 11; i++) {monthList.push(i)}
+const Counter = {
+    data() {
+        return {
+            curDate: new Date(),
+            yearList,
+            showYearList: false,
+            monthList,
+            showMonthList: false,
+            tableList: [],
+        }
+    },
+    computed: {
+        curYear () {
+            return this.curDate.getFullYear()
+        },
+        curMonth () {
+            return this.curDate.getMonth()
+        },
+        curDay () {
+            return this.curDate.getDate()
+        },
+        lastMonthEndDay() {
+            return new Date(this.curYear, this.curMonth, 0).getDate()
+        },
+        curMonthEndDay() {
+            return new Date(this.curYear, this.curMonth + 1, 0).getDate()
+        },
+        curMonthFirstWeekDay () {
+            return new Date(this.curYear, this.curMonth, 1).getDay()
+        },
+        lastMonthNum () {
+            let lastMonthNum = this.curMonthFirstWeekDay - 1
+            return this.curMonthFirstWeekDay === 0 ? 6 : lastMonthNum
+        },
+        isCurrent() {
+            let current = new Date()
+            return (
+                current.getFullYear() === this.curYear &&
+                current.getMonth() === this.curMonth &&
+                current.getDate() === this.curDay
+            )
+        }
+    },
+    methods: {
         init() {
-            this.renderSelect(this.curDate)
-            this.getData(this.curDate)
-            this.selectBindEvent()
             this.monthChange()
             this.backToday()
         },
-        renderSelect (d) {
-            let yearList = document.querySelector('.calendar-header .selector-box ul.year')
-            let selectYear = document.querySelector('.calendar-header .selector-box .selector .year')
-            let monthList = document.querySelector('.calendar-header .selector-box ul.month')
-            let selectMonth = document.querySelector('.calendar-header .selector-box .selector .month')
-            // 年份
-            let yearLi = ''
-            yearList.innerHTML = ''
-            for(let i = 1990; i <= 2030; i++) {
-                yearLi += `<li ${i === d.getFullYear() ? ' class="active" ' : ''}>${i}年</li>`
-            }
-            yearList.innerHTML = yearLi
-            selectYear.innerHTML = `${d.getFullYear()}年`
-            // 月份
-            let monthLy = ''
-            monthList.innerHTML = ''
-            for(let i = 0; i <= 11; i++) {
-                monthLy += `<li ${i === d.getMonth() ? ' class="active" ' : ''}>${i+1}月</li>`
-            }
-            monthList.innerHTML = monthLy
-            selectMonth.innerHTML = `${d.getMonth() + 1}月`
-        },
-        selectBindEvent() {
-            let selects = document.querySelectorAll('.selector-box')
-            selects.forEach((select, index) => {
-                let curClass = select.classList
-                let selector = select.querySelector('.selector span:nth-child(1)')
-                select.onclick = (ev) =>{
-                    if (curClass.contains('active')) {
-                        curClass.remove('active')
-                        if (ev.target.tagName === 'LI'){
-                            let curLis = [...select.querySelectorAll('ul li')]
-                            let activeLi = curLis.find(el => el.classList.contains('active'))
-                            activeLi.classList.remove('active')
-                            ev.target.classList.add('active')
-                            const value = ev.target.textContent
-                            selector.innerHTML = value
-                            index === 0 ? this.curDate.setFullYear(parseInt(value)) : this.curDate.setMonth(parseInt(value) - 1 )
-                            this.getData(this.curDate)
-                        }
-                    } else {
-                        this.closeSelect()
-                        curClass.add('active')
-                        index === 0 ? this.scrollBar() : ''
-                    }
-                }
-            })
-        },
-        closeSelect() {
-            let selects = document.querySelectorAll('.selector-box')
-            selects && selects.forEach((select) => select.classList.remove('active'))
-        },
-        scrollBar() {
-            let selectorWrap = document.querySelectorAll('.selector-box')[0].querySelector('.selector-list')
-            let selectorUl = document.querySelectorAll('.selector-box')[0].querySelector('.selector-list ul')
-            let selectorScroll = document.querySelectorAll('.selector-box')[0].querySelector('.selector-list .scroll')
-            let selectorSpan = document.querySelectorAll('.selector-box')[0].querySelector('.selector-list .scroll span')
-
-            selectorSpan.style.transform = selectorUl.style.transform = 'translateY(0)'
-            let multiple = (selectorUl.offsetHeight + 18) / selectorWrap.offsetHeight
-            selectorSpan.style.height = selectorWrap.offsetHeight / multiple + 'px'
-
-            let scrollTop = 0
-            let maxHeight = selectorScroll.offsetHeight - selectorSpan.offsetHeight
-            selectorSpan.onmousedown = function (ev) {
-                let startY = ev.clientY
-                let startT = parseInt(this.style.transform.split('(')[1])
-                document.onmousemove = ev => {
-                    scrollTop = ev.clientY - startY + startT
-                    scrollTop > 0 ? scrollTop > maxHeight ? scrollTop = maxHeight : '' : scrollTop = 0
-                    scroll()
-                }
-                document.onmouseup = () => document.onmousemove = null
-                selectorScroll.onclick=(ev) => ev.stopPropagation()
-            }
-            function scroll() {
-                let scaleY = scrollTop / maxHeight
-                selectorSpan.style.transform = `translateY(${scrollTop}px)`
-                selectorUl.style.transform = `translateY(${(selectorWrap.offsetHeight - selectorUl.offsetHeight - 18) * scaleY}px)`
-            }
-            selectorWrap.onwheel = (ev) => {
-                ev.deltaY > 0 ? scrollTop += 10 : scrollTop -= 10
-                scrollTop > 0 ? scrollTop > maxHeight ? scrollTop = maxHeight : '' : scrollTop = 0
-                scroll()
-                ev.preventDefault();
+        handleShowselect (type) {
+            if (type === 'year') {
+                this.showYearList = !this.showYearList
+                this.showMonthList = false
+            } else {
+                this.showMonthList = !this.showMonthList
+                this.showYearList = false
             }
         },
-        getEndDay(year, month) {
-            return new Date(year, month, 0).getDate()
+        handleSelectYear (year) {
+            this.curDate = new Date(year,this.curMonth,this.curDay)
+            this.getData()
         },
-        getFirstWeek(year, month) {
-            return new Date(year, month - 1, 1).getDay()
+        handleSelectMonth (month) {
+            this.curDate = new Date(this.curYear,month,this.curDay)
+            this.getData()
         },
         changeNum(num) {
             const Bit = {
@@ -122,108 +88,71 @@
             const splitNum = num.toString().split('')
             return splitNum.length === 2 ? `${Ten[splitNum[0]]}${Bit[splitNum[1]]}` : `初${Bit[splitNum[0]]}`
         },
-        getData(d) {
-            let lastMonthEndDay = this.getEndDay(d.getFullYear(), d.getMonth())
-            let curMonthEndDay = this.getEndDay(d.getFullYear(), d.getMonth() + 1)
-            let curMonthFirstWeekDay = this.getFirstWeek(d.getFullYear(), d.getMonth() + 1)
-            let lastMonthNum = curMonthFirstWeekDay - 1
-            lastMonthNum = curMonthFirstWeekDay === 0 ? 6 : lastMonthNum
-            let lastMonthDay = lastMonthEndDay - lastMonthNum + 1
+        getData() {
             let nextMonthDay = 1
             let curMonthDay = 1
 
-            let day = 0
-            let tBody = document.querySelector('.calendar-content tbody')
-            tBody.innerHTML = ''
+            let num = 0
+            let lastMonthDay = this.lastMonthEndDay - this.lastMonthNum + 1
+            let table = []
             for(let i = 0; i < 6; i ++) {
-                let tr = document.createElement('tr')
-                let td = ''
+                let tr = []
                 for(let j = 0; j < 7; j ++) {
-                    if (day < lastMonthNum) {
+                    let td = {}
+                    if (num < this.lastMonthNum) {
                         let last = lastMonthDay ++
                         let lNum = this.changeNum(last)
-                        td += `<td>
-                            <div class="last-month day">
-                                <span>${last}</span>
-                                <span>${lNum}</span>
-                            </div>
-                        </td>`
-                        tr.innerHTML = td
-                    } else if (day >= curMonthEndDay + lastMonthNum) {
+                        td = {
+                            status: 'last-month',
+                            day: last,
+                            nDay: lNum,
+                            num
+                        }
+                        tr.push(td)
+                    } else if (num >= this.curMonthEndDay + this.lastMonthNum) {
                         let next = nextMonthDay ++
                         let nNum = this.changeNum(next)
-                        td += `<td>
-                            <div class="day next-month">
-                                <span>${next ++}</span>
-                                <span>${nNum}</span>
-                            </div>
-                        </td>`
-                        tr.innerHTML = td
-                    }
-                    else {
-                        let current = new Date()
-                        let cl = ''
-                        if (
-                            current.getFullYear() === d.getFullYear() &&
-                            current.getMonth() === d.getMonth() &&
-                            current.getDate() === d.getDate() &&
-                            curMonthDay == d.getDate()
-                        ) {
-                            cl += ' current'
+                        td = {
+                            status: 'next-month',
+                            day: next,
+                            nDay: nNum,
+                            num
                         }
-                        let cur = curMonthDay ++
+                        tr.push(td)
+                    } else {
+                        let cur = curMonthDay
                         let CNum = this.changeNum(cur)
-                        td += `<td>
-                            <div class="day ${cl}">
-                                <span>${cur}</span>
-                                <span>${CNum}</span>
-                            </div>
-                        </td>`
-                        tr.innerHTML = td
+                        td = {
+                            status: curMonthDay == this.curDay && this.isCurrent ? 'current' : '',
+                            day: cur,
+                            nDay: CNum,
+                            num
+                        }
+                        curMonthDay ++
+                        tr.push(td)
                     }
-                    day ++
+                    num ++
                 }
-                tBody.appendChild(tr)
+                table.push(tr)
             }
-            this.bindTable()
+            this.tableList = table
         },
-        monthChange() {
-            let before = document.querySelector('.calendar-header .before')
-            let after = document.querySelector('.calendar-header .after')
-            before.onclick=()=>{
-                this.curDate.setMonth(this.curDate.getMonth() - 1)
-                this.renderSelect(this.curDate)
-                this.getData(this.curDate)
-                this.closeSelect()
-            }
-            after.onclick=()=>{
-                this.curDate.setMonth(this.curDate.getMonth() + 1)
-                this.renderSelect(this.curDate)
-                this.getData(this.curDate)
-                this.closeSelect()
-            }
+        handleClickBefore() {
+            this.curDate = new Date(this.curYear,this.curMonth - 1,this.curDay)
+            this.getData(this.curDate)
         },
-        backToday() {
-            let back = document.querySelector('.calendar-header .back-today')
-            back.onclick=()=>{
-                this.curDate = new Date()
-                this.renderSelect(this.curDate)
-                this.getData(this.curDate)
-                this.closeSelect()
-            }
+        handleClickAfter() {
+            this.curDate = new Date(this.curYear,this.curMonth + 1,this.curDay)
+            this.getData(this.curDate)
         },
-        bindTable () {
-            let tds = [...document.querySelectorAll('.calendar-content tbody .day')]
-            let active = tds.find((td) => td.classList.contains('active'));
-            tds.forEach((td) => {
-                td.onclick=()=>{
-                    active && active.classList.remove('active')
-                    td.classList.add('active')
-                    active = td
-                }
-            })
+        handleBack() {
+            this.curDate = new Date()
+            this.getData(this.curDate)
         }
+    },
+    mounted () {
+        this.getData()
     }
-    calendar.init()
-    
-}())
+}
+
+Vue.createApp(Counter).mount('#calendar')
