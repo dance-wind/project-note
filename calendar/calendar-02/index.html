@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="calendar" id="calendar">
+        <div class="calendar-main">
+            <div class="calendar-header">
+                <div @click="handleShowselect('year')" class="selector-box" :class="{'active': showYearList}">
+                    <div class="selector">
+                        <span class="year">{{curYear}}年</span>
+                        <span></span>
+                    </div>
+                    <div class="selector-list" ref="selectorWrap">
+                        <ul class="year" ref="selectorUl">
+                            <li v-for="(year, index) in yearList" @click="handleSelectYear(year)" :key="index" :class="{'active': year === curYear}">{{year}}年</li>
+                        </ul>
+                    </div>
+                </div>
+                <div @click="handleClickBefore" class="before">
+                    <span />
+                </div>
+                <div @click="handleShowselect('month')" class="selector-box" :class="{'active': showMonthList}">
+                    <div class="selector">
+                        <span class="month">{{curMonth + 1}}月</span>
+                        <span></span>
+                    </div>
+                    <div class="selector-list">
+                        <ul class="month">
+                            <li v-for="(month, index) in monthList" @click="handleSelectMonth(month)" :key="index" :class="{'active': month === curMonth}">{{month + 1}}月</li>
+                        </ul>
+                    </div>
+                </div>
+                <div @click="handleClickAfter" class="after">
+                    <span />
+                </div>
+                <div @click="handleBack" class="back-today">
+                    返回今天
+                </div>
+            </div>
+            <div class="calendar-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>一</th>
+                            <th>二</th>
+                            <th>三</th>
+                            <th>四</th>
+                            <th>五</th>
+                            <th>六</th>
+                            <th>日</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(tr, i) in tableList" :key="i">
+                            <td v-for="(td, j) in tr" :key="j">
+                                <div :class="['day', td.status]">
+                                    <span>{{td.day}}</span>
+                                    <span>{{td.nDay}} </span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="js/vue.js"></script>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/index.css">
+    <script src="js/demo.js"></script>
+</body>
+</html>
