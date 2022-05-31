@@ -34,7 +34,7 @@
     top: 38px;
     z-index: 10;
     display: none;
-    overflow: hidden;
+    overflow: auto;
     user-select: none;
 }
 .calendar-main .calendar-header .selector-box.active .selector-list {
