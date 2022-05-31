@@ -51,7 +51,6 @@
                     } else {
                         this.closeSelect()
                         curClass.add('active')
-                        index === 0 ? this.scrollBar() : ''
                     }
                 }
             })
@@ -59,41 +58,6 @@
         closeSelect() {
             let selects = document.querySelectorAll('.selector-box')
             selects && selects.forEach((select) => select.classList.remove('active'))
-        },
-        scrollBar() {
-            let selectorWrap = document.querySelectorAll('.selector-box')[0].querySelector('.selector-list')
-            let selectorUl = document.querySelectorAll('.selector-box')[0].querySelector('.selector-list ul')
-            let selectorScroll = document.querySelectorAll('.selector-box')[0].querySelector('.selector-list .scroll')
-            let selectorSpan = document.querySelectorAll('.selector-box')[0].querySelector('.selector-list .scroll span')
-
-            selectorSpan.style.transform = selectorUl.style.transform = 'translateY(0)'
-            let multiple = (selectorUl.offsetHeight + 18) / selectorWrap.offsetHeight
-            selectorSpan.style.height = selectorWrap.offsetHeight / multiple + 'px'
-
-            let scrollTop = 0
-            let maxHeight = selectorScroll.offsetHeight - selectorSpan.offsetHeight
-            selectorSpan.onmousedown = function (ev) {
-                let startY = ev.clientY
-                let startT = parseInt(this.style.transform.split('(')[1])
-                document.onmousemove = ev => {
-                    scrollTop = ev.clientY - startY + startT
-                    scrollTop > 0 ? scrollTop > maxHeight ? scrollTop = maxHeight : '' : scrollTop = 0
-                    scroll()
-                }
-                document.onmouseup = () => document.onmousemove = null
-                selectorScroll.onclick=(ev) => ev.stopPropagation()
-            }
-            function scroll() {
-                let scaleY = scrollTop / maxHeight
-                selectorSpan.style.transform = `translateY(${scrollTop}px)`
-                selectorUl.style.transform = `translateY(${(selectorWrap.offsetHeight - selectorUl.offsetHeight - 18) * scaleY}px)`
-            }
-            selectorWrap.onwheel = (ev) => {
-                ev.deltaY > 0 ? scrollTop += 10 : scrollTop -= 10
-                scrollTop > 0 ? scrollTop > maxHeight ? scrollTop = maxHeight : '' : scrollTop = 0
-                scroll()
-                ev.preventDefault();
-            }
         },
         getEndDay(year, month) {
             return new Date(year, month, 0).getDate()

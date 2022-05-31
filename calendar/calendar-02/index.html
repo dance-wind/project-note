@@ -15,8 +15,8 @@
                         <span class="year">{{curYear}}年</span>
                         <span></span>
                     </div>
-                    <div class="selector-list" ref="selectorWrap">
-                        <ul class="year" ref="selectorUl">
+                    <div class="selector-list">
+                        <ul class="year">
                             <li v-for="(year, index) in yearList" @click="handleSelectYear(year)" :key="index" :class="{'active': year === curYear}">{{year}}年</li>
                         </ul>
                     </div>
