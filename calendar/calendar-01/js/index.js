@@ -8,6 +8,10 @@
             this.monthChange()
             this.backToday()
         },
+        /**
+         * @description 渲染下拉框
+         * @param d 当前选择的时间
+         */
         renderSelect (d) {
             let yearList = document.querySelector('.calendar-header .selector-box ul.year')
             let selectYear = document.querySelector('.calendar-header .selector-box .selector .year')
@@ -30,6 +34,9 @@
             monthList.innerHTML = monthLy
             selectMonth.innerHTML = `${d.getMonth() + 1}月`
         },
+        /**
+         * 给下拉框绑定点击事件
+         */
         selectBindEvent() {
             let selects = document.querySelectorAll('.selector-box')
             selects.forEach((select, index) => {
@@ -55,16 +62,31 @@
                 }
             })
         },
+        /**
+         * 关闭下拉选择框
+         */
         closeSelect() {
             let selects = document.querySelectorAll('.selector-box')
             selects && selects.forEach((select) => select.classList.remove('active'))
         },
+        /**
+         * 月份天数
+         */
         getEndDay(year, month) {
             return new Date(year, month, 0).getDate()
         },
+        /**
+         * 当前月份从哪一格开始
+         */
         getFirstWeek(year, month) {
-            return new Date(year, month - 1, 1).getDay()
+            let days = new Date(year, month, 1).getDay()
+            return days === 0 ? 6 : days -1
         },
+        /**
+         * @description 转中文数字
+         * @param num 数字
+         * @returns {string} 
+         */
         changeNum(num) {
             const Bit = {
                 '1': '一',
@@ -86,13 +108,16 @@
             const splitNum = num.toString().split('')
             return splitNum.length === 2 ? `${Ten[splitNum[0]]}${Bit[splitNum[1]]}` : `初${Bit[splitNum[0]]}`
         },
+        /**
+         * @description 渲染月份
+         * @param d 当前选择的时间 
+         */
         getData(d) {
             let lastMonthEndDay = this.getEndDay(d.getFullYear(), d.getMonth())
             let curMonthEndDay = this.getEndDay(d.getFullYear(), d.getMonth() + 1)
-            let curMonthFirstWeekDay = this.getFirstWeek(d.getFullYear(), d.getMonth() + 1)
-            let lastMonthNum = curMonthFirstWeekDay - 1
-            lastMonthNum = curMonthFirstWeekDay === 0 ? 6 : lastMonthNum
-            let lastMonthDay = lastMonthEndDay - lastMonthNum + 1
+            let curMonthNum = this.getFirstWeek(d.getFullYear(), d.getMonth())
+            // 上个月从哪天开始展示 = 上个月的天数 -  上个月最后一天从哪一格开始
+            let lastMonthDay = lastMonthEndDay - curMonthNum + 1
             let nextMonthDay = 1
             let curMonthDay = 1
 
@@ -103,7 +128,7 @@
                 let tr = document.createElement('tr')
                 let td = ''
                 for(let j = 0; j < 7; j ++) {
-                    if (day < lastMonthNum) {
+                    if (day < curMonthNum) {
                         let last = lastMonthDay ++
                         let lNum = this.changeNum(last)
                         td += `<td>
@@ -113,7 +138,7 @@
                             </div>
                         </td>`
                         tr.innerHTML = td
-                    } else if (day >= curMonthEndDay + lastMonthNum) {
+                    } else if (day >= curMonthEndDay + curMonthNum) {
                         let next = nextMonthDay ++
                         let nNum = this.changeNum(next)
                         td += `<td>
@@ -127,10 +152,10 @@
                     else {
                         let current = new Date()
                         let cl = ''
+                        // 当前选择的时间 === 实际时间（年月日都相等）
                         if (
                             current.getFullYear() === d.getFullYear() &&
                             current.getMonth() === d.getMonth() &&
-                            current.getDate() === d.getDate() &&
                             curMonthDay == d.getDate()
                         ) {
                             cl += ' current'
@@ -151,6 +176,9 @@
             }
             this.bindTable()
         },
+        /**
+         * 上个月&下个月
+         */
         monthChange() {
             let before = document.querySelector('.calendar-header .before')
             let after = document.querySelector('.calendar-header .after')
@@ -167,6 +195,9 @@
                 this.closeSelect()
             }
         },
+        /**
+         * 返回今天
+         */
         backToday() {
             let back = document.querySelector('.calendar-header .back-today')
             back.onclick=()=>{
@@ -176,7 +207,11 @@
                 this.closeSelect()
             }
         },
+        /**
+         * 给日历单元格添加点击事件
+         */
         bindTable () {
+            // 拿到的是类数组 需转换为数组才能使用数组方法
             let tds = [...document.querySelectorAll('.calendar-content tbody .day')]
             let active = tds.find((td) => td.classList.contains('active'));
             tds.forEach((td) => {
