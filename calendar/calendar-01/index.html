@@ -11,30 +11,22 @@
         <div class="calendar-main">
             <div class="calendar-header">
                 <div class="selector-box">
-                    <div class="selector">
+                    <div class="selector" id="year-select">
                         <span class="year"></span>
-                        <span></span>
-                    </div>
-                    <div class="selector-list">
-                        <ul class="year"></ul>
                     </div>
                 </div>
-                <div class="before">
-                    <span />
-                </div>
-                <div class="selector-box">
+                <div class="selector-box" id="month-select">
                     <div class="selector">
-                        <span class="month">5月</span>
-                        <span></span>
-                    </div>
-                    <div class="selector-list">
-                        <ul class="month"></ul>
+                        <span class="month"></span>
                     </div>
                 </div>
-                <div class="after">
+                <div class="before" id="before">
                     <span />
                 </div>
-                <div class="back-today">
+                <div class="after" id="after">
+                    <span />
+                </div>
+                <div class="back-today" id="back-today">
                     返回今天
                 </div>
             </div>
@@ -51,8 +43,10 @@
                             <th>日</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody id="calendar-table"></tbody>
                 </table>
+                <div class="month-list" id="month-list"></div>
+                <div class="year-list" id="year-list"></div>
             </div>
         </div>
     </div>

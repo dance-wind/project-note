@@ -1,228 +1,251 @@
 (function() {
+    /**
+     * 月份列表
+     */
+    const yearListDom = document.querySelector('#year-list')
+    /**
+     * 年份选择器
+     */
+    const yearPickerDom = document.querySelector('#year-select')
+    /**
+     * 月份列表
+     */
+    const monthListDom = document.querySelector('#month-list')
+    /**
+     * 月份选择器
+     */
+    const monthPickerDom = document.querySelector('#month-select')
+    /**
+     * 日历表
+     */
+    const calendarTableDom = document.querySelector('#calendar-table')
+    
+    const beforeDom = document.querySelector('#before')
+
+    const afterDom = document.querySelector('#after')
+
+    const backDom = document.querySelector('#back-today')
+
+    const yearList = []
+    const monthList = []
+    for(let i = 1990; i <= 2030; i++) {yearList.push(i)}
+    for(let i = 0; i <= 11; i++) {monthList.push(i)}
+
     let calendar = {
         curDate: new Date(),
-        init() {
-            this.renderSelect(this.curDate)
-            this.getData(this.curDate)
-            this.selectBindEvent()
+        render() {
+            this.renderYearAndMonthPicker()
+            this.renderTable()
+            this.renderYearListAndMonthList()
+        },
+        bindClick() {
             this.monthChange()
             this.backToday()
-        },
-        /**
-         * @description 渲染下拉框
-         * @param d 当前选择的时间
-         */
-        renderSelect (d) {
-            let yearList = document.querySelector('.calendar-header .selector-box ul.year')
-            let selectYear = document.querySelector('.calendar-header .selector-box .selector .year')
-            let monthList = document.querySelector('.calendar-header .selector-box ul.month')
-            let selectMonth = document.querySelector('.calendar-header .selector-box .selector .month')
-            // 年份
-            let yearLi = ''
-            yearList.innerHTML = ''
-            for(let i = 1990; i <= 2030; i++) {
-                yearLi += `<li ${i === d.getFullYear() ? ' class="active" ' : ''}>${i}年</li>`
-            }
-            yearList.innerHTML = yearLi
-            selectYear.innerHTML = `${d.getFullYear()}年`
-            // 月份
-            let monthLy = ''
-            monthList.innerHTML = ''
-            for(let i = 0; i <= 11; i++) {
-                monthLy += `<li ${i === d.getMonth() ? ' class="active" ' : ''}>${i+1}月</li>`
-            }
-            monthList.innerHTML = monthLy
-            selectMonth.innerHTML = `${d.getMonth() + 1}月`
-        },
-        /**
-         * 给下拉框绑定点击事件
-         */
-        selectBindEvent() {
-            let selects = document.querySelectorAll('.selector-box')
-            selects.forEach((select, index) => {
-                let curClass = select.classList
-                let selector = select.querySelector('.selector span:nth-child(1)')
-                select.onclick = (ev) =>{
-                    if (curClass.contains('active')) {
-                        curClass.remove('active')
-                        if (ev.target.tagName === 'LI'){
-                            let curLis = [...select.querySelectorAll('ul li')]
-                            let activeLi = curLis.find(el => el.classList.contains('active'))
-                            activeLi.classList.remove('active')
-                            ev.target.classList.add('active')
-                            const value = ev.target.textContent
-                            selector.innerHTML = value
-                            index === 0 ? this.curDate.setFullYear(parseInt(value)) : this.curDate.setMonth(parseInt(value) - 1 )
-                            this.getData(this.curDate)
-                        }
-                    } else {
-                        this.closeSelect()
-                        curClass.add('active')
-                    }
-                }
-            })
-        },
-        /**
-         * 关闭下拉选择框
-         */
-        closeSelect() {
-            let selects = document.querySelectorAll('.selector-box')
-            selects && selects.forEach((select) => select.classList.remove('active'))
+            this.addMonthButtonOrYearButtonClick()
         },
         /**
          * 月份天数
+         * @param year 年份
+         * @param month 月份
          */
         getEndDay(year, month) {
+            // (year, month, 0)表示是(year, month, 1)的前一天 => 上个月的最后一天
+            // getDate 返回是月份中的哪一日 
             return new Date(year, month, 0).getDate()
         },
         /**
-         * 当前月份从哪一格开始
+         * 当月在日历表哪一格开始
+         * @param year 年份
+         * @param month 月份
          */
         getFirstWeek(year, month) {
-            let days = new Date(year, month, 1).getDay()
-            return days === 0 ? 6 : days -1
+            // getDay 返回是一周中的第几天，返回 0 表示星期天
+            let days = new Date(year, month - 1, 1).getDay()
+            // 周一 => 周天  0 => 6
+            return days === 0 ? 6 : days - 1
         },
         /**
-         * @description 转中文数字
-         * @param num 数字
-         * @returns {string} 
+         * @param curDay 日期
+         * @returns 
          */
-        changeNum(num) {
-            const Bit = {
-                '1': '一',
-                '2': '二',
-                '3': '三',
-                '4': '四',
-                '5': '五',
-                '6': '六',
-                '7': '七',
-                '8': '八',
-                '9': '九',
-                '0': '',
-            };
-            const Ten = {
-                '1': '十',
-                '2': '二十',
-                '3': '三十',
-            }
-            const splitNum = num.toString().split('')
-            return splitNum.length === 2 ? `${Ten[splitNum[0]]}${Bit[splitNum[1]]}` : `初${Bit[splitNum[0]]}`
+        isToday (curDay) {
+            let today = new Date()
+            const curDate = this.curDate
+            return (
+                today.getFullYear() === curDate.getFullYear() &&
+                today.getMonth() === curDate.getMonth() &&
+                curDay == curDate.getDate()
+            )
         },
         /**
          * @description 渲染月份
-         * @param d 当前选择的时间 
          */
-        getData(d) {
-            let lastMonthEndDay = this.getEndDay(d.getFullYear(), d.getMonth())
-            let curMonthEndDay = this.getEndDay(d.getFullYear(), d.getMonth() + 1)
-            let curMonthNum = this.getFirstWeek(d.getFullYear(), d.getMonth())
-            // 上个月从哪天开始展示 = 上个月的天数 -  上个月最后一天从哪一格开始
-            let lastMonthDay = lastMonthEndDay - curMonthNum + 1
+        renderTable() {
+            const curDate = this.curDate
+            // 上个月的天数
+            let lastMonthEndDay = this.getEndDay(curDate.getFullYear(), curDate.getMonth())
+            // 当月天数
+            let curMonthEndDay = this.getEndDay(curDate.getFullYear(), curDate.getMonth() + 1)
+            // 当月在日历表哪一格开始
+            let curMonthNum = this.getFirstWeek(curDate.getFullYear(), curDate.getMonth() + 1)
+            // 上个月日历 = 上个月的天数 -  上个月在第几格结束
+            let lastMonthDay = lastMonthEndDay - (curMonthNum - 1)
+            // 下个月日历
             let nextMonthDay = 1
+            // 当月日历
             let curMonthDay = 1
-
-            let day = 0
-            let tBody = document.querySelector('.calendar-content tbody')
-            tBody.innerHTML = ''
+            // 日历格子
+            let cell = 0
+            
+            calendarTableDom.innerHTML = ''
             for(let i = 0; i < 6; i ++) {
                 let tr = document.createElement('tr')
                 let td = ''
                 for(let j = 0; j < 7; j ++) {
-                    if (day < curMonthNum) {
-                        let last = lastMonthDay ++
-                        let lNum = this.changeNum(last)
+                    /**
+                     * 渲染上个月的格子
+                     */
+                    const renderLast = () => {
                         td += `<td>
-                            <div class="last-month day">
-                                <span>${last}</span>
-                                <span>${lNum}</span>
-                            </div>
+                            <div class="last-month day">${lastMonthDay}</div>
                         </td>`
-                        tr.innerHTML = td
-                    } else if (day >= curMonthEndDay + curMonthNum) {
-                        let next = nextMonthDay ++
-                        let nNum = this.changeNum(next)
-                        td += `<td>
-                            <div class="day next-month">
-                                <span>${next ++}</span>
-                                <span>${nNum}</span>
-                            </div>
-                        </td>`
+                        lastMonthDay ++ 
                         tr.innerHTML = td
                     }
-                    else {
-                        let current = new Date()
-                        let cl = ''
-                        // 当前选择的时间 === 实际时间（年月日都相等）
-                        if (
-                            current.getFullYear() === d.getFullYear() &&
-                            current.getMonth() === d.getMonth() &&
-                            curMonthDay == d.getDate()
-                        ) {
-                            cl += ' current'
-                        }
-                        let cur = curMonthDay ++
-                        let CNum = this.changeNum(cur)
+                    /**
+                     * 渲染下个月的格子
+                     */
+                    const renderNext = () => {
                         td += `<td>
-                            <div class="day ${cl}">
-                                <span>${cur}</span>
-                                <span>${CNum}</span>
-                            </div>
+                            <div class="day next-month">${nextMonthDay}</div>
                         </td>`
+                        nextMonthDay ++
                         tr.innerHTML = td
                     }
-                    day ++
+                    /**
+                     * 渲染当月的格子
+                     */
+                    const renderCur = () => {
+                        let cl = this.isToday(curMonthDay) ? 'current' : ''
+                        td += `<td>
+                            <div class="day ${cl}">${curMonthDay}</div>
+                        </td>`
+                        curMonthDay ++
+                        tr.innerHTML = td
+                    }
+
+                    if (cell < curMonthNum) {
+                        renderLast()
+                    } else if (cell >= curMonthEndDay + curMonthNum) {
+                        renderNext()
+                    } else {
+                        renderCur()
+                    }
+                    cell ++
                 }
-                tBody.appendChild(tr)
+                calendarTableDom.appendChild(tr)
             }
-            this.bindTable()
         },
         /**
          * 上个月&下个月
          */
         monthChange() {
-            let before = document.querySelector('.calendar-header .before')
-            let after = document.querySelector('.calendar-header .after')
-            before.onclick=()=>{
+            const render = () => {
+                this.renderYearAndMonthPicker()
+                this.renderTable()
+            }
+            beforeDom.onclick=()=>{
+                this.closeList()
                 this.curDate.setMonth(this.curDate.getMonth() - 1)
-                this.renderSelect(this.curDate)
-                this.getData(this.curDate)
-                this.closeSelect()
+                render()
             }
-            after.onclick=()=>{
+            afterDom.onclick=()=>{
+                this.closeList()
                 this.curDate.setMonth(this.curDate.getMonth() + 1)
-                this.renderSelect(this.curDate)
-                this.getData(this.curDate)
-                this.closeSelect()
+                render()
             }
+        },
+        /**
+         * 点击月份按钮显示月份列表
+         * 点击年份按钮显示年份列表
+         */
+        addMonthButtonOrYearButtonClick () {
+            yearPickerDom.onclick = () => {
+                this.closeList()
+                yearListDom.classList.add('show')
+            }
+            monthPickerDom.onclick = () => {
+                this.closeList()
+                monthListDom.classList.add('show')
+            }
+        },
+        closeList () {
+            this.closeYearList()
+            this.closeMonthList()
+        },
+        closeYearList () {
+            yearListDom.classList.remove('show')
+        },
+        closeMonthList () {
+            monthListDom.classList.remove('show')
+        },
+        /**
+         * 渲染年份列表&月份列表
+         */
+        renderYearListAndMonthList () {
+            monthList.forEach((monthItem) => {
+                let month = document.createElement('div')
+                month.classList.add('month')
+                month.innerHTML = `<div>${monthItem + 1}月</div>`
+                month.onclick = () => {
+                    console.log(monthItem);
+                    this.closeList()
+                    this.curDate.setMonth(monthItem)
+                    this.renderYearAndMonthPicker()
+                    this.renderTable()
+                }
+                monthListDom.appendChild(month)
+            })
+            yearList.forEach((yearItem) => {
+                let year = document.createElement('div')
+                year.classList.add('year')
+                year.innerHTML = `<div>${yearItem}年</div>`
+                year.onclick = () => {
+                    this.closeList()
+                    this.curDate.setFullYear(yearItem)
+                    this.renderYearAndMonthPicker()
+                    this.renderTable()
+                }
+                yearListDom.appendChild(year)
+            })
+        },
+        getCurMonth () {
+            console.log(this.curDate.getMonth());
+            return this.curDate.getMonth()
+        },
+        /**
+         * @description 渲染当前年月
+         */
+        renderYearAndMonthPicker () {
+            const curDate = this.curDate
+            let selectYear = yearPickerDom.querySelector('.year')
+            let selectMonth = monthPickerDom.querySelector('.month')
+            selectYear.innerHTML = `${curDate.getFullYear()}年`
+            selectMonth.innerHTML = `${this.getCurMonth() + 1}月`
         },
         /**
          * 返回今天
          */
         backToday() {
-            let back = document.querySelector('.calendar-header .back-today')
-            back.onclick=()=>{
+            backDom.onclick=()=>{
                 this.curDate = new Date()
-                this.renderSelect(this.curDate)
-                this.getData(this.curDate)
-                this.closeSelect()
+                this.closeList()
+                this.renderYearAndMonthPicker()
+                this.renderTable()
             }
         },
-        /**
-         * 给日历单元格添加点击事件
-         */
-        bindTable () {
-            // 拿到的是类数组 需转换为数组才能使用数组方法
-            let tds = [...document.querySelectorAll('.calendar-content tbody .day')]
-            let active = tds.find((td) => td.classList.contains('active'));
-            tds.forEach((td) => {
-                td.onclick=()=>{
-                    active && active.classList.remove('active')
-                    td.classList.add('active')
-                    active = td
-                }
-            })
-        }
     }
-    calendar.init()
+    calendar.render()
+    calendar.bindClick()
     
 }())

@@ -1,6 +1,14 @@
+:root {
+    --blue: #4E6EF2;
+    --white: #fff;
+    --grey: #666;
+    --light-grey: #999;
+    --dark-grey: #333;
+    --black: #000;
+    --red: #F73131;
+}
 .calendar {
     height: 500px;
-    position: relative;
     z-index: 1;
     display: flex;
     justify-content: center;
@@ -10,7 +18,7 @@
     height: 100%;
     padding: 15px 15px 0;
     border-radius: 16px;
-    border: 2px solid #4E6EF2;
+    border: 2px solid var(--blue);
     box-sizing: border-box;
 }
 .calendar-main .calendar-header{
@@ -21,42 +29,15 @@
 .calendar-main .calendar-header .selector-box {
     position: relative;
 }
-.calendar-main .calendar-header .selector-box .selector-list {
-    max-height: 350px;
-    width: 100px;
-    box-sizing: border-box;
-    box-shadow: 0 1px 10px 0 rgb(0 0 0 / 10%);
-    border-radius: 6px;
-    background: #FFFFFF;
-    padding: 9px 16px;
-    position: absolute;
-    left: 0;
-    top: 38px;
-    z-index: 10;
-    display: none;
-    overflow: auto;
-    user-select: none;
-}
-.calendar-main .calendar-header .selector-box.active .selector-list {
-    display: block;
-}
-.calendar-main .calendar-header .selector-box .selector-list ul li{
-    height: 27px;
-    line-height: 27px;
-    cursor: pointer;
-}
-.calendar-main .calendar-header .selector-box .selector-list ul li:hover, .calendar-main .calendar-header .selector-box .selector-list ul li.active {
-    color: #315EFB;
-}
-.calendar-main .calendar-header .selector-box .selector{
+.calendar-header .selector-box .selector{
     box-sizing: border-box;
     width: 96px;
     margin-right: 9px;
-    border: 1px solid #D7D9E0;
+    border: 1px solid var(--light-grey);
     border-radius: 6px;
     height: 30px;
     cursor: pointer;
-    background: #fff;
+    background: var(--white);
     user-select: none;
     padding: 0 7px;
     position: relative;
@@ -64,78 +45,81 @@
     justify-content:space-between;
     align-items:center;
 }
-.calendar-main .calendar-header .selector-box .selector:hover{
-    border: 1px solid #A7AAB5;
+.calendar-header .selector-box .selector:hover{
+    border: 1px solid var(--dark-grey);
 }
-.calendar-main .calendar-header .selector-box .selector span:nth-child(1){
+.calendar-header .selector-box .selector span:nth-child(1){
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-.calendar-main .calendar-header .selector-box .selector span:nth-child(2) {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    border-top: 2px solid #9195A3;
-    border-right: 2px solid #9195A3;
-    transform: rotate(-45deg);
-}
-.calendar-main .calendar-header .active.selector-box .selector span:nth-child(2) {
-    transform: rotate(135deg);
+    font-weight: 800;
 }
 
-.calendar-main .calendar-header .before,  .calendar-main .calendar-header .after{
+.calendar-header .before,  .calendar-header .after{
+    margin-left: 10px;
     width: 30px;
     height: 30px;
-    text-align: center;
-    line-height: 30px;
+    display: flex;
+    justify-content:center;
+    align-items:center;
     cursor: pointer;
 }
 
-.calendar-main .calendar-header .before span, .calendar-main .calendar-header .after span{
-    margin-left: -5px;
+.calendar-header .before span, .calendar-header .after span{
     display: inline-block;
     width: 7px;
     height: 7px;
-    border-top: 2px solid #9195A3;
-    border-right: 2px solid #9195A3;
-    transform: rotate(-135deg);
+    border-top: 2px solid var(--light-grey);
+    border-right: 2px solid var(--light-grey);
+    transform: rotate(-45deg);
+    margin-top: 4px;
 }
-.calendar-main .calendar-header .after span {
-    transform: rotate(45deg);
+.calendar-header .before:hover span,  .calendar-header .after:hover span{
+    border-top: 2px solid var(--dark-grey);
+    border-right: 2px solid var(--dark-grey);
+}
+.calendar-header .after span {
+    transform: rotate(135deg);
+    margin-top: -4px;
 }
 
-.calendar-main .calendar-header .back-today {
+.calendar-header .back-today {
     margin-left: auto;
     width: 68px;
     height: 30px;
     line-height: 30px;
     text-align: center;
-    background: #F5F5F6;
+    background: #eee;
     border-radius: 6px;
-    color: #333;
+    color: var(--grey);
     cursor: pointer;
+    font-weight: 800;
 }
-.calendar-main .calendar-header .back-today:hover{
-    color: #315efb;
-    background: #F0F0F1;
+.calendar-header .back-today:hover{
+    color: var(--blue);
 }
 
-.calendar-main .calendar-content table{
+.calendar-content {
+    width: 100%;
+    position: relative;
+}
+
+.calendar-content table{
     width: 100%;
     margin-top: 14px;
 }
-.calendar-main .calendar-content table th{
+.calendar-content table th{
     font-weight: normal;
     height: 36px;
 }
-.calendar-main .calendar-content table td{
+.calendar-content table td{
     text-align: center;
     width: 64px;
     height: 60px;
     padding: 2px;
+    animation: to-top .2s forwards;
 }
-.calendar-main .calendar-content table td .day {
+.calendar-content table td .day {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -148,69 +132,76 @@
     box-sizing: border-box;
     border: 2px solid transparent;
     position: relative;
-}
-
-.calendar-main .calendar-content table td .day:hover {
-    border: 2px solid #BDBFC8;
-}
-
-.calendar-main .calendar-content table td .day span:nth-child(1) {
-    height: 22px;
     font-size: 18px;
-    color: #000;
-}
-.calendar-main .calendar-content table td .day span:nth-child(2) {
-    color: #333;
-    font-size: 12px;
+    color: var(--black);
 }
 
-.calendar-main .calendar-content table td:nth-child(n+6) .day span:nth-child(1) {
-    color: #F73131;
+.calendar-content td .day:hover {
+    border: 2px solid var(--grey);
 }
 
-.calendar-main .calendar-content table td .holiday {
-    background: #FDE3E4;
-}
-.calendar-main .calendar-content table td .holiday:hover {
-    border: 2px solid #F38686 !important;
-}
-.calendar-main .calendar-content table td .holiday::before {
-    content: '休';
-    position: absolute;
-    left: 4px;
-    top: 4px;
-    color: #F73131;
-    font-size: 12px;
-    line-height: 12px;
-}
-.calendar-main .calendar-content table td .holiday span:nth-child(1) {
-    color: #F73131;
+.calendar-content td:nth-child(n+6) .day{
+    color: var(--red);
 }
 
-.calendar-main .calendar-content table td .work-day {
-    background: #f5f5f6;
-}
-.calendar-main .calendar-content table td .work-day::before {
-    content: '班';
-    position: absolute;
-    left: 4px;
-    top: 4px;
-    color: #626675;
-    font-size: 12px;
-    line-height: 12px;
-}
-.calendar-main .calendar-content table td .work-day span:nth-child(1) {
-    color: #000;
+.calendar-content td .current {
+    border: 2px solid var(--blue) !important;
 }
 
-.calendar-main .calendar-content table td .active {
-    border: 2px solid #BDBFC8;
-}
-
-.calendar-main .calendar-content table td .current {
-    border: 2px solid #4E6EF2 !important;
-}
-
-.calendar-main .calendar-content table td .last-month, .calendar-main .calendar-content table td .next-month {
+.calendar-content td .last-month, .calendar-content td .next-month {
     opacity: 0.4;
+}
+.month-list, .year-list {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items:center;
+    flex-wrap: wrap;
+    transform: scale(0.8);
+    visibility: hidden;
+    pointer-events: none;
+    background-color: var(--white);
+    box-sizing: border-box;
+    overflow: auto;
+}
+.month-list .month, .year-list .year {
+    flex: 0 0 33%;
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    border-radius: 6px;
+    cursor: pointer;
+    height: 56px;
+    padding: 4px 2px 2px 2px;
+    box-sizing: border-box;
+    border: 2px solid transparent;
+    position: relative;
+    font-size: 18px;
+    color: var(--black);
+}
+.year-list .year {
+    flex: 0 0 25%;
+}
+.month-list .month:hover, .year-list .year:hover {
+    border: 2px solid var(--grey);
+}
+.month-list.show, .year-list.show {
+    transform: scale(1);
+    visibility: visible;
+    pointer-events: visible;
+    transition: all 0.2s ease-in-out;
+}
+@keyframes to-top {
+    0% {
+        transform: translateY(50%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
