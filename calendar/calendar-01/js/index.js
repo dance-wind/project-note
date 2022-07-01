@@ -19,11 +19,17 @@
      * 日历表
      */
     const calendarTableDom = document.querySelector('#calendar-table')
-    
+    /**
+     * 上个月
+     */
     const beforeDom = document.querySelector('#before')
-
+    /**
+     * 下个月
+     */
     const afterDom = document.querySelector('#after')
-
+    /**
+     * 回到今天
+     */
     const backDom = document.querySelector('#back-today')
 
     const yearList = []
@@ -48,7 +54,7 @@
          * @param year 年份
          * @param month 月份
          */
-        getEndDay(year, month) {
+        getMonthDay(year, month) {
             // (year, month, 0)表示是(year, month, 1)的前一天 => 上个月的最后一天
             // getDate 返回是月份中的哪一日 
             return new Date(year, month, 0).getDate()
@@ -58,7 +64,7 @@
          * @param year 年份
          * @param month 月份
          */
-        getFirstWeek(year, month) {
+        getFirstMonthCell(year, month) {
             // getDay 返回是一周中的第几天，返回 0 表示星期天
             let days = new Date(year, month - 1, 1).getDay()
             // 周一 => 周天  0 => 6
@@ -83,11 +89,11 @@
         renderTable() {
             const curDate = this.curDate
             // 上个月的天数
-            let lastMonthEndDay = this.getEndDay(curDate.getFullYear(), curDate.getMonth())
+            let lastMonthEndDay = this.getMonthDay(curDate.getFullYear(), curDate.getMonth())
             // 当月天数
-            let curMonthEndDay = this.getEndDay(curDate.getFullYear(), curDate.getMonth() + 1)
+            let curMonthEndDay = this.getMonthDay(curDate.getFullYear(), curDate.getMonth() + 1)
             // 当月在日历表哪一格开始
-            let curMonthNum = this.getFirstWeek(curDate.getFullYear(), curDate.getMonth() + 1)
+            let curMonthNum = this.getFirstMonthCell(curDate.getFullYear(), curDate.getMonth() + 1)
             // 上个月日历 = 上个月的天数 -  上个月在第几格结束
             let lastMonthDay = lastMonthEndDay - (curMonthNum - 1)
             // 下个月日历
@@ -220,8 +226,10 @@
             })
         },
         getCurMonth () {
-            console.log(this.curDate.getMonth());
             return this.curDate.getMonth()
+        },
+        getCurYear () {
+            return this.curDate.getFullYear()
         },
         /**
          * @description 渲染当前年月
@@ -230,7 +238,7 @@
             const curDate = this.curDate
             let selectYear = yearPickerDom.querySelector('.year')
             let selectMonth = monthPickerDom.querySelector('.month')
-            selectYear.innerHTML = `${curDate.getFullYear()}年`
+            selectYear.innerHTML = `${this.getCurYear()}年`
             selectMonth.innerHTML = `${this.getCurMonth() + 1}月`
         },
         /**
