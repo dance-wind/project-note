@@ -1,57 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/index.css" />
+  </head>
+  <body>
     <div class="calendar">
-        <div class="calendar-main">
-            <div class="calendar-header">
-                <div class="selector-box">
-                    <div class="selector" id="year-select">
-                        <span class="year"></span>
-                    </div>
-                </div>
-                <div class="selector-box" id="month-select">
-                    <div class="selector">
-                        <span class="month"></span>
-                    </div>
-                </div>
-                <div class="before" id="before">
-                    <span />
-                </div>
-                <div class="after" id="after">
-                    <span />
-                </div>
-                <div class="back-today" id="back-today">
-                    返回今天
-                </div>
+      <div class="calendar-main">
+        <div class="calendar-header">
+          <div class="selector-box">
+            <div class="selector" id="year-select">
+              <span class="year"></span>
             </div>
-            <div class="calendar-content">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>一</th>
-                            <th>二</th>
-                            <th>三</th>
-                            <th>四</th>
-                            <th>五</th>
-                            <th>六</th>
-                            <th>日</th>
-                        </tr>
-                    </thead>
-                    <tbody id="calendar-table"></tbody>
-                </table>
-                <div class="month-list" id="month-list"></div>
-                <div class="year-list" id="year-list"></div>
+          </div>
+          <div class="selector-box">
+            <div class="selector" id="month-select">
+              <span class="month"></span>
             </div>
+          </div>
+          <div class="before" id="before">
+            <span />
+          </div>
+          <div class="after" id="after">
+            <span />
+          </div>
+          <div class="back-today" id="back-today">返回今天</div>
         </div>
+        <div class="calendar-content">
+          <div class="weekdays">
+            <span>一</span>
+            <span>二</span>
+            <span>三</span>
+            <span>四</span>
+            <span>五</span>
+            <span>六</span>
+            <span>日</span>
+          </div>
+          <div class="day-table" id="calendar-table"></div>
+          <div class="month-list" id="month-list"></div>
+          <div class="year-list" id="year-list"></div>
+        </div>
+      </div>
     </div>
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/index.css">
     <script src="js/index.js"></script>
-</body>
+  </body>
 </html>
