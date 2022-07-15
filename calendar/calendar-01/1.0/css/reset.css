@@ -1,0 +1,58 @@
+* {
+    margin: 0;
+    padding: 0
+}
+
+em, i {
+    font-style: normal
+}
+
+li {
+    list-style: none
+}
+
+img {
+    border: 0;
+    vertical-align: middle
+}
+
+button {
+    cursor: pointer
+}
+
+a {
+    color: #666;
+    text-decoration: none
+}
+
+a:hover {
+    color: #e33333
+}
+
+button, input {
+    font-family: Microsoft YaHei, Heiti SC, tahoma, arial, Hiragino Sans GB, \\5B8B\4F53, sans-serif
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    background-color: #fff;
+    font: 12px/1.5 Microsoft YaHei, Heiti SC, tahoma, arial, Hiragino Sans GB, \\5B8B\4F53, sans-serif;
+    color: #666
+}
+
+::-webkit-scrollbar {
+    /*滚动条整体样式*/
+    width: 4px; /*高宽分别对应横竖滚动条的尺寸*/
+    height: 1px;
+}
+::-webkit-scrollbar-thumb {
+    /*滚动条里面小方块*/
+    border-radius: 10px;
+    background: #4E6EF2;
+}
+::-webkit-scrollbar-track {
+    /*滚动条里面轨道*/
+    border-radius: 10px;
+    background: #fff;
+}
+

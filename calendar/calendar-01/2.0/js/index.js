@@ -253,7 +253,6 @@
       for (let i = this.startYear; i < endYear; i++) {
         yearList.push(i)
       }
-
       yearListDom.innerHTML = ''
       yearList.forEach(yearItem => {
         const year = document.createElement('div')
@@ -279,7 +278,7 @@
       for (let i = 0; i <= 11; i++) {
         monthList.push(i)
       }
-
+      monthListDom.innerHTML = ''
       monthList.forEach(monthItem => {
         const month = document.createElement('div')
         month.classList.add('month')
